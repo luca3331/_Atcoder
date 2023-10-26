@@ -1,29 +1,40 @@
+from collections import deque
 N, L = map(int, input().split())
 K = int(input())
 A = list(map(int, input().split()))
+A_diff = [-1 for _ in range(N + 1)]
+for i in range(N + 1):
+    if i == 0:
+        A_diff[0] = A[0]
+    elif i == N:
+        A_diff[i] = L - A[-1]
+    else:
+        A_diff[i] = A[i] - A[i - 1]
 
-import heapq
+def is_can(score):
+    AA = deque(A_diff[:])
 
-class PriorityQueue:
-    def __init__(self):
-        self.heap = []
-        self.counter = 0
+    tmp_score = 0
+    ct = 0
+    while len(AA):
+        tmp_score += AA.popleft()
+        if tmp_score >= score:
+            tmp_score = 0
+            ct += 1
+        if ct >= K + 1:
+            return True
+    else:
+        return False
 
-    def push(self, item, priority):
-        entry = (priority, self.counter, item)
-        heapq.heappush(self.heap, entry)
-        self.counter += 1
+def bin_search():
+    left = 1
+    right = L
+    while left <= right:
+        mid = (left + right) // 2
+        if is_can(mid):
+            left = mid + 1
+        else:
+            right = mid - 1
+    return right
 
-    def pop(self):
-        (_, _, item) = heapq.heappop(self.heap)
-        return item
-
-# 使用例
-priority_queue = PriorityQueue()
-priority_queue.push({'name': 'Alice'}, 2)
-priority_queue.push({'name': 'Bob'}, 1)
-priority_queue.push({'name': 'Charlie'}, 3)
-
-print(priority_queue.pop())  # {'name': 'Bob'}
-print(priority_queue.pop())  # {'name': 'Alice'}
-print(priority_queue.pop())  # {'name': 'Charlie'}
+print(bin_search())
