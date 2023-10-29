@@ -1,16 +1,29 @@
 N, K = list(map(int, input().split()))
 S = input()
-char_list = set(S)
-nex = [[-1 for _ in range(N)] for _ in range(27)]
+nex = [[N] * 26 for _ in range(N + 1)]
 
-res = [[N] * 26 for _ in range(N + 1)]
 
 for i in range(N - 1, -1, -1):
     # i + 1 文字目以降の結果を一旦 i 文字にコピー
     for j in range(26):
-        res[i][j] = res[i + 1][j]
+        nex[i][j] = nex[i+1][j]
+    nex[i][ord(S[i]) - ord('a')] = i
 
-    # i 文字目の情報を反映させる
-    res[i][ord(S[i]) - ord('a')] = i
 
-print(res)
+ans = ""
+now = 0
+for i in range(K):
+    for c in range(26):
+        if N - nex[now][c] >= K - i:
+            ans += chr(ord('a') + c)
+            now = nex[now][c] + 1
+            break
+print(ans)
+
+
+
+# for i in range(K):
+#     for c in range(26):
+#         if nex[i][c] <= N - (K - i):
+#             ans += chr(ord('a') + c)
+#             now = nex[now][c] + 1
